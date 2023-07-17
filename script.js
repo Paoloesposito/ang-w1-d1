@@ -1,47 +1,46 @@
-function randomBetween(min, max) {
+function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-function getClosestNumber(target, number1, number2) {
-    var diff1 = Math.abs(target - number1);
-    var diff2 = Math.abs(target - number2);
-    if (diff1 === diff2) {
-        return 0; // In caso di pareggio, ritorna 0 per indicare che entrambi sono alla stessa distanza
-    }
-    else if (diff1 < diff2) {
-        return number1;
-    }
-    else {
-        return number2;
-    }
+function getAbsoluteDifference(num1, num2) {
+    return Math.abs(num1 - num2);
 }
-function checkGuesses(player1Number, player2Number, targetNumber) {
-    var player1Diff = Math.abs(targetNumber - player1Number);
-    var player2Diff = Math.abs(targetNumber - player2Number);
-    if (player1Diff === 0 && player2Diff === 0) {
-        return "Entrambi i giocatori hanno indovinato il numero!";
+function playGame() {
+    var player1NumberInput = document.getElementById('player1');
+    var player2NumberInput = document.getElementById('player2');
+    var resultElement = document.getElementById('result');
+    if (!player1NumberInput || !player2NumberInput || !resultElement) {
+        return;
     }
-    else if (player1Diff === 0) {
-        return "Il giocatore 1 ha indovinato il numero!";
+    var player1Number = parseInt(player1NumberInput.value);
+    var player2Number = parseInt(player2NumberInput.value);
+    if (isNaN(player1Number) || isNaN(player2Number)) {
+        resultElement.textContent = 'Inserire solo numeri validi.';
+        return;
     }
-    else if (player2Diff === 0) {
-        return "Il giocatore 2 ha indovinato il numero!";
+    var minRandomNumber = 1;
+    var maxRandomNumber = 100;
+    var randomNumber = getRandomNumber(minRandomNumber, maxRandomNumber);
+    var player1Difference = getAbsoluteDifference(player1Number, randomNumber);
+    var player2Difference = getAbsoluteDifference(player2Number, randomNumber);
+    resultElement.innerHTML = "Il numero casuale era: ".concat(randomNumber, ".<br/>");
+    if (player1Number === randomNumber && player2Number === randomNumber) {
+        resultElement.innerHTML += 'Entrambi i giocatori hanno indovinato il numero! Pareggio!';
+    }
+    else if (player1Number === randomNumber) {
+        resultElement.innerHTML += 'Giocatore 1 ha vinto! Congratulazioni!';
+    }
+    else if (player2Number === randomNumber) {
+        resultElement.innerHTML += 'Giocatore 2 ha vinto! Congratulazioni!';
     }
     else {
-        var closest = getClosestNumber(targetNumber, player1Number, player2Number);
-        if (closest === 0) {
-            return "Entrambi i giocatori si sono avvicinati allo stesso modo al numero.";
+        if (player1Difference === player2Difference) {
+            resultElement.innerHTML += 'Entrambi i giocatori si sono avvicinati allo stesso modo.';
+        }
+        else if (player1Difference < player2Difference) {
+            resultElement.innerHTML += 'Giocatore 1 si è avvicinato di più al numero.';
         }
         else {
-            return "Il giocatore ".concat(closest === player1Number ? 1 : 2, " si \u00E8 avvicinato di pi\u00F9 al numero.");
+            resultElement.innerHTML += 'Giocatore 2 si è avvicinato di più al numero.';
         }
     }
 }
-// Esempio di utilizzo
-var targetNumber = randomBetween(1, 100);
-var player1Number = randomBetween(1, 100);
-var player2Number = randomBetween(1, 100);
-console.log("Il numero casuale da indovinare \u00E8: ".concat(targetNumber));
-console.log("Il giocatore 1 ha scelto: ".concat(player1Number));
-console.log("Il giocatore 2 ha scelto: ".concat(player2Number));
-var result = checkGuesses(player1Number, player2Number, targetNumber);
-console.log(result);
